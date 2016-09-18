@@ -43,20 +43,24 @@ package object scalashop {
     if (radius == 0) {
         src(x, y)
     } else {
-      val size = (radius * 2 + 1) 
-      val base = size*size
+      val xmin = math.max(0, (x - radius))
+      val ymin = math.max(0, (y - radius))
+      val xmax = math.min(src.width-1, x + radius)
+      val ymax = math.min(src.height-1, y + radius)
+      val size = (xmax-xmin+1)*(ymax-ymin+1) 
       val b = { 
         for {
-          x1 <- (x - radius) to (x + radius)
-          y1 <- (y - radius) to (y + radius)
+          x1 <- xmin to xmax
+          y1 <- ymin to ymax
 //          if !(x1 == x && y1 == y)
         } yield { 
+//          println("x1: " + x1 + " y1: " + y1)
           val rgba = src(x1, y1)
           (red(rgba), green(rgba), blue(rgba), alpha(rgba) )
           }
         }
       val c = b.reduce((a,b) => (a._1 + b._1, a._2 + b._2, a._3 + b._3, a._4 + b._4))
-      rgba(c._1/base, c._2/base, c._3/base, c._4/base)
+      rgba(c._1/size, c._2/size, c._3/size, c._4/size)
     }
   }
 

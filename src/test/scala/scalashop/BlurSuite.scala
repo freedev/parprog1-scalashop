@@ -20,6 +20,16 @@ class BlurSuite extends FunSuite {
         "boxBlurKernel(_,_,0) should be identity.")
   }
 
+  test("boxBlurKernel check bounds") {
+    val src = new Img(5, 5)
+
+    for (x <- 0 until 5; y <- 0 until 5)
+      src(x, y) = rgba(0, 0, 0, 0)
+
+      assert(boxBlurKernel(src, 0, 0, 1) === rgba(0, 0, 0, 0),
+        "boxBlurKernel(_,_,0) should be identity.")
+  }
+
   test("boxBlurKernel should return the correct value on an interior pixel " +
     "of a 3x4 image with radius 1") {
     val src = new Img(3, 4)
