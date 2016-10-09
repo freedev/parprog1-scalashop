@@ -46,9 +46,8 @@ object HorizontalBoxBlur {
 
     for {
       x <- 0 until src.width
-      y <- math.max(0, from) until math.min(end, src.width)
+      y <- math.max(0, from) until math.min(end, src.height)
     } yield {
-//      println("x: " + x + " y: " + y)
         dst.update(x, y, boxBlurKernel(src, x, y, radius) )
     }
   }
@@ -60,15 +59,14 @@ object HorizontalBoxBlur {
    *  rows.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-  // TODO implement using the `task` construct and the `blur` method
-
-    val size = if (src.width < numTasks) 1 else src.width / numTasks
+    // TODO implement using the `task` construct and the `blur` method
+    val size = if (src.height < numTasks) 1 else src.height / numTasks
     val tasks = for (
-        x <- 0 to src.width-1 by size
+        y <- 0 to src.height-1 by size
         ) yield {
       task {
-        val to = if ((x+size) > src.width) src.width else x+size
-        blur(src, dst, x, to, radius)
+        val to = if ((y+size) > src.height) src.height else y+size
+        blur(src, dst, y, to, radius)
       }
     }
     tasks.foreach { x => x.join() }
